@@ -8,7 +8,6 @@
 		<artifactId>portlet-parent-pom</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
-	<groupId>life.qbic</groupId>
 	<artifactId>projectbrowser-portlet</artifactId>
 	<version>1.7.0-SNAPSHOT</version>
 	<name>ProjectBrowser Portlet</name>
@@ -163,4 +162,17 @@
 		</dependency>
 
 	</dependencies>
+<profiles>
+<profile>
+	<id>Liferay-v6.2-CE-(Tomcat-7)</id>
+	<properties>
+		<liferay.version>6.2.3</liferay.version>
+		<liferay.maven.plugin.version>6.2.3</liferay.maven.plugin.version>
+		<liferay.auto.deploy.dir>/home/openbis/portal/liferay-portal-6.2-ce-ga4/deploy</liferay.auto.deploy.dir>
+		<liferay.app.server.deploy.dir>/home/openbis/portal/liferay-portal-6.2-ce-ga4/tomcat-7.0.42/webapps</liferay.app.server.deploy.dir>
+		<liferay.app.server.lib.global.dir>/home/openbis/portal/liferay-portal-6.2-ce-ga4/tomcat-7.0.42/lib/ext</liferay.app.server.lib.global.dir>
+		<liferay.app.server.portal.dir>/home/openbis/portal/liferay-portal-6.2-ce-ga4/tomcat-7.0.42/webapps/ROOT</liferay.app.server.portal.dir>
+	</properties>
+	</profile>
+</profiles>
 </project>
