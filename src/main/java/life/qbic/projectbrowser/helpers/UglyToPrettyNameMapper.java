@@ -250,6 +250,11 @@ public class UglyToPrettyNameMapper {
     namesMapping.put("MSH_PATHOLOGY_REVIEW_FINISHED", "Tumor sample review completed.");
     namesMapping
         .put("MSH_SENT_TO_HUMAN_GENETICS", "Tumor sample sent to Human Genetics department");
+    
+    //CFH specific stuff
+    namesMapping.put("Q_CFH_ELEMENT", "Element Analysis");
+    namesMapping.put("Q_CFH_NMIN", "Nmin Analysis");
+    
 
   }
 

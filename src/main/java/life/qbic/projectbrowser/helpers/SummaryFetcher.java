@@ -89,6 +89,8 @@ public class SummaryFetcher {
       put("Q_WF_MS_LIGANDOMICS_ID", "Ligandomics Identification Workflow");
       put("Q_WF_MS_LIGANDOMICS_QC", "Ligandomics Quality Control Workflow");
       put("Q_MHC_LIGAND_EXTRACTION", "MHC Ligand Extraction");
+      put("Q_CFH_ELEMENT", "Element Analysis");
+      put(" Q_CFH_NMIN", "Nmin Analysis");
     };
   };
   private WordprocessingMLPackage wordMLPackage;
@@ -110,13 +112,19 @@ public class SummaryFetcher {
     Map<String, String> chromTypesMap =
         openbis.getVocabCodesAndLabelsForVocab("Q_CHROMATOGRAPHY_TYPES");
     Map<String, String> antibodiesMap = openbis.getVocabCodesAndLabelsForVocab("Q_ANTIBODY");
-
+    Map<String, String> eaDeviceMap = openbis.getVocabCodesAndLabelsForVocab("Q_CFH_DEVICES");
+    Map<String, String> extractionsMap = openbis.getVocabCodesAndLabelsForVocab("Q_CFH_EXTRACTIONS");
+    Map<String, String> soildepthMap = openbis.getVocabCodesAndLabelsForVocab("Q_CFH_SOILDEPTH");
+    
     allMap.putAll(reverseMap(cellLinesMap));
     allMap.putAll(reverseMap(deviceMap));
     allMap.putAll(reverseMap(taxMap));
     allMap.putAll(reverseMap(tissueMap));
     allMap.putAll(reverseMap(antibodiesMap));
     allMap.putAll(reverseMap(chromTypesMap));
+    allMap.putAll(reverseMap(eaDeviceMap));
+    allMap.putAll(reverseMap(extractionsMap));
+    allMap.putAll(reverseMap(soildepthMap));    
   }
 
   private Map<String, String> reverseMap(Map<String, String> map) {
