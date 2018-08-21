@@ -165,7 +165,7 @@ public class SummaryFetcher {
     // collect and connect everything (if samples exist)
     List<Sample> samples =
         openbis.getSamplesWithParentsAndChildrenOfProjectBySearchService(projectCode);
-    if (!projectCode.startsWith("Q") || projectCode.length() != 5) {
+    if (!projectCode.startsWith("2") || projectCode.length() != 15) {
       success = false;
       return res;
     }

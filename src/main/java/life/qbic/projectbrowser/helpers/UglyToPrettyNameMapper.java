@@ -255,6 +255,9 @@ public class UglyToPrettyNameMapper {
     namesMapping.put("Q_CFH_ELEMENT", "Element Analysis");
     namesMapping.put("Q_CFH_NMIN", "Nmin Analysis");
     
+    namesMapping.put("Q_CFH_ELEMENTS", "Element Analysis Sample");
+    namesMapping.put("Q_CFH_NMINS", "Nmin Analysis Sample");
+    
 
   }
 
