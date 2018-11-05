@@ -359,7 +359,7 @@ public class LevelComponent extends CustomComponent {
                                 && !sample.getSampleTypeCode().equals("Q_MS_RUN")
                                 && !sample.getSampleTypeCode().equals("Q_BIOLOGICAL_SAMPLE")
                                 && !sample.getSampleTypeCode().equals("Q_BIOLOGICAL_ENTITY")
-                                && !sample.getSampleTypeCode().equals("Q_NGS_SINGLE_SAMPLE_RUN")) {
+                                && !sample.getSampleTypeCode().equals("Q_NGS_SINGLE_SAMPLE_RUN")) { 
 
                                 Map<String, String> sampleProperties = sample.getProperties();
                                 TestSampleBean newBean = new TestSampleBean();
@@ -368,6 +368,7 @@ public class LevelComponent extends CustomComponent {
                                 newBean.setType(prettyNameMapper.getPrettyName(sample.getSampleTypeCode()));
                                 newBean.setAdditionalInfo(sampleProperties.get("Q_ADDITIONAL_INFO"));
                                 newBean.setSecondaryName(sampleProperties.get("Q_SECONDARY_NAME"));
+                                newBean.setExternalDB(sampleProperties.get("Q_EXTERNALDB_ID")); //changed by cfh
                                 newBean.setProperties(sampleProperties);
 
                                 samplesContainer.addBean(newBean);

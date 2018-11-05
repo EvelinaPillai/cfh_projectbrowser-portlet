@@ -36,10 +36,11 @@ public class OpenBisFunctions {
    * @return Project prefix of the sample
    */
   public static String getProjectPrefix(String sample) {
-    if (Utils.isInteger("" + sample.charAt(4)))
-      return sample.substring(0, 4);
+	  //we actually never have 4 or 5 letters but always 15
+    if (Utils.isInteger("" + sample.charAt(4))) //this should be always true in out case
+      return sample.substring(0, 15); //changed by CFH from (0, 4) to (0, 15) see if it's right
     else
-      return sample.substring(0, 5);
+      return sample.substring(0, 15); //changed by CHF from (0, 5) to (0, 15)
   }
 
   public static double statusToDoubleValue(String status) {
