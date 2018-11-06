@@ -690,6 +690,7 @@ public class DataHandler implements Serializable {
         sbean.setCode(sample.getCode());
         sbean.setType(sample.getSampleTypeCode());
         sbean.setProperties(sample.getProperties());
+        sbean.setParents(this.getOpenBisClient().getParentsBySearchService(sample.getCode())); //changed by cfh 
         sampleBeans.addBean(sbean);
       }
       newExperimentBean.setSamples(sampleBeans);
@@ -1024,7 +1025,8 @@ public class DataHandler implements Serializable {
       SampleBean sbean = new SampleBean();
       sbean.setId(sample.getIdentifier());
       sbean.setCode(sample.getCode());
-      sbean.setType(sample.getSampleTypeCode());
+      sbean.setType(sample.getSampleTypeCode()); 
+      sbean.setParents(this.getOpenBisClient().getParentsBySearchService(sample.getCode())); //changed by cfh
       sbean.setProperties(sample.getProperties());
       /*
        * Map<String, String> sampleTypeLabels =
@@ -1341,7 +1343,7 @@ public class DataHandler implements Serializable {
     newSampleBean.setCode(sample.getCode());
     newSampleBean.setType(sample.getSampleTypeCode());
     newSampleBean.setProperties(properties);
-    newSampleBean.setParents(this.getOpenBisClient().getParentsBySearchService(sample.getCode()));
+    newSampleBean.setParents(this.getOpenBisClient().getParentsBySearchService(sample.getCode()));  
     newSampleBean
         .setChildren(this.getOpenBisClient().getFacade().listSamplesOfSample(sample.getPermId()));
 

@@ -15,10 +15,13 @@
  *******************************************************************************/
 package life.qbic.projectbrowser.views;
 
+import java.util.List;
+
 import javax.xml.bind.JAXBException;
 
 import org.tepi.filtertable.FilterTable;
 
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
@@ -35,7 +38,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ch.systemsx.cisd.openbis.generic.shared.dto.EventPE.EntityType;
-
 import life.qbic.projectbrowser.controllers.*;
 import life.qbic.projectbrowser.helpers.UglyToPrettyNameMapper;
 import life.qbic.projectbrowser.helpers.Utils;
@@ -43,6 +45,7 @@ import life.qbic.projectbrowser.helpers.ViewTablesClickListener;
 import life.qbic.projectbrowser.helpers.DatasetViewFilterGenerator;
 import life.qbic.projectbrowser.helpers.DatasetViewFilterDecorator;
 import life.qbic.projectbrowser.model.ExperimentBean;
+import life.qbic.projectbrowser.model.SampleBean;
 import life.qbic.projectbrowser.components.MultiscaleComponent;
 
 import org.apache.logging.log4j.LogManager;
@@ -98,7 +101,7 @@ public class ExperimentView extends VerticalLayout implements View {
 
 
   /**
-   * init this view. builds the layout skeleton Menubar Description and others Statisitcs Experiment
+   * init this view. builds the layout skeleton Menubar Description and others Statistics Experiment
    * Table Graph
    */
   void initView() {
@@ -120,7 +123,7 @@ public class ExperimentView extends VerticalLayout implements View {
     expview_content.addComponent(expview_tab);
 
     expview_tab.addTab(initDescription(), "General Information").setIcon(FontAwesome.INFO_CIRCLE);
-    // expview_tab.addTab(initStatistics(), "Statistics").setIcon(FontAwesome.CHECK_CIRCLE);
+    //expview_tab.addTab(initStatistics(), "Statistics").setIcon(FontAwesome.CHECK_CIRCLE);
     expview_tab.addTab(initProperties(), "Metadata").setIcon(FontAwesome.LIST_UL);
     expview_tab.addTab(initTable(), "Samples").setIcon(FontAwesome.TINT);
     initNoteComponent();
@@ -182,6 +185,7 @@ public class ExperimentView extends VerticalLayout implements View {
   void updateContentButtonLayout() {
     if (fileDownloader != null)
       this.export.removeExtension(fileDownloader);
+    BeanItemContainer<SampleBean> samples = currentBean.getSamples();
     StreamResource sr =
         Utils.getTSVStream(Utils.containerToString(currentBean.getSamples()), currentBean.getId());
     fileDownloader = new FileDownloader(sr);
