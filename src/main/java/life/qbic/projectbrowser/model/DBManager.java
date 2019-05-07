@@ -92,6 +92,11 @@ public class DBManager {
     String details = getPersonDetailsForProject(projectIdentifier, "PI");
     return details.split("<br>")[0].trim().replace("<p>", "");
   }
+  
+  public String getProjectManager(String projectIdentifier) {
+	    String details = getPersonDetailsForProject(projectIdentifier, "Manager");
+	    return details.split("<br>")[0].trim().replace("<p>", "");
+	  }
 
   // TODO
   // should contain name, role for this project and some information for every person

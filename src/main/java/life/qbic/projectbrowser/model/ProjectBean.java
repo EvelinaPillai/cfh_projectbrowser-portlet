@@ -46,11 +46,12 @@ public class ProjectBean implements Serializable {
   private Boolean containsData;
   private Boolean containsResults;
   private Boolean containsAttachments;
+  private String status;
 
   public ProjectBean(String id, String code, String secondaryName, String description, String space,
       BeanItemContainer<ExperimentBean> experiments, ProgressBar progress, Date registrationDate,
       String registrator, String contact, Set<String> members, Boolean containsData,
-      Boolean containsResults, Boolean containsAttachments, String projectManager) {
+      Boolean containsResults, Boolean containsAttachments, String projectManager, String status) {
     super();
     this.id = id;
     this.code = code;
@@ -66,6 +67,7 @@ public class ProjectBean implements Serializable {
     this.setContainsData(containsData);
     this.setContainsResults(containsResults);
     this.setContainsAttachments(containsAttachments);
+    this.setStatus(status);
   }
 
   public ProjectBean() {
@@ -245,4 +247,11 @@ public class ProjectBean implements Serializable {
   public void setContainsAttachments(Boolean containsAttachment) {
     this.containsAttachments = containsAttachment;
   }
+  public String getStatus() {
+	    return status;
+	  }
+
+	  public void setStatus(String status) {
+	    this.status = status;
+	  }
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import life.qbic.portal.portlet.ProjectBrowserPortlet;
+
 import org.tepi.filtertable.FilterTable;
 
 import com.vaadin.data.Item;
@@ -52,6 +53,7 @@ import com.vaadin.ui.renderers.ClickableRenderer.RendererClickEvent;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.Experiment;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.Project;
 
 import org.apache.logging.log4j.LogManager;
@@ -151,12 +153,13 @@ public class HomeView extends VerticalLayout implements View {
 
     GeneratedPropertyContainer gpcProjects =
         new GeneratedPropertyContainer(spaceBean.getProjects());
+    
     gpcProjects.removeContainerProperty("members");
     gpcProjects.removeContainerProperty("id");
     gpcProjects.removeContainerProperty("experiments");
     gpcProjects.removeContainerProperty("contact");
     gpcProjects.removeContainerProperty("contactPerson");
-    gpcProjects.removeContainerProperty("projectManager");
+   // gpcProjects.removeContainerProperty("projectManager");
     gpcProjects.removeContainerProperty("containsData");
     gpcProjects.removeContainerProperty("containsResults");
     gpcProjects.removeContainerProperty("containsAttachments");
@@ -185,7 +188,9 @@ public class HomeView extends VerticalLayout implements View {
     projectGrid.getColumn("space").setMaximumWidth(350);
     projectGrid.getColumn("space").setHeaderCaption("Project");
     projectGrid.getColumn("principalInvestigator").setHeaderCaption("Investigator");
-    projectGrid.setColumnOrder("code", "space", "secondaryName", "principalInvestigator");
+    projectGrid.getColumn("projectManager").setHeaderCaption("Project Manager");
+    projectGrid.getColumn("status").setHeaderCaption("Status");
+    projectGrid.setColumnOrder("code", "space", "secondaryName", "principalInvestigator","projectManager", "status");
 
     projectGrid.setResponsive(true);
 
@@ -416,7 +421,7 @@ public class HomeView extends VerticalLayout implements View {
 
       ProjectBean newProjectBean = new ProjectBean(projectIdentifier, projectCode, secondaryName,
           desc, project.getSpaceCode(), new BeanItemContainer<ExperimentBean>(ExperimentBean.class),
-          new ProgressBar(), new Date(), "", "", null, false, false, false, "");
+          new ProgressBar(), new Date(), "", "", null, false, false, false, "", "");
 
       // TODO isn't this slow in this fashion? what about SELECT * and creating a map?
       String pi = datahandler.getDatabaseManager().getInvestigatorForProject(projectIdentifier);
@@ -426,8 +431,30 @@ public class HomeView extends VerticalLayout implements View {
       } else {
         newProjectBean.setPrincipalInvestigator(pi);
       }
+      
+      String pm = datahandler.getDatabaseManager().getProjectManager(projectIdentifier);
+
+      if (pm.equals("")) {
+        newProjectBean.setProjectManager("n/a");
+      } else {
+        newProjectBean.setProjectManager(pm);
+      }
+      
+     List<Experiment> experiments = datahandler.getOpenBisClient().getExperimentsForProject2(project);
+     String experimentState = "";
+     if(!experiments.isEmpty() && experiments != null){
+    	 experimentState = experiments.get(0).getProperties().get("Q_CURRENT_STATUS");
+    	 }
+ 
+     if (experimentState != null && !experimentState.equals("")){
+    	 newProjectBean.setStatus(experimentState);
+     }else{
+    	 newProjectBean.setStatus("IN PROGRESS");
+     }
 
       projectContainer.addBean(newProjectBean);
+      
+      
     }
 
     homeSpaceBean.setProjects(projectContainer);
