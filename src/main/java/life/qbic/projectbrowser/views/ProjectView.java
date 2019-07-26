@@ -213,7 +213,7 @@ public class ProjectView extends VerticalLayout implements View {
         new BiologicalSamplesComponent(datahandler, state, resourceUrl, "Biological Samples");
     measuredSamplesComponent = new LevelComponent(datahandler, state, resourceUrl, "Raw Data");
     resultsComponent = new LevelComponent(datahandler, state, resourceUrl, "Results");
-    workflowComponent = new WorkflowComponent(wfController);
+   // workflowComponent = new WorkflowComponent(wfController); //deactivate workflow by cfh
     uploadComponent = new AttachmentUploadComponent();
     projectInformation = new ProjInformationComponent(datahandler, state, resourceUrl);
     experimentComponent = new ExperimentComponent(datahandler, state, resourceUrl);
@@ -233,7 +233,7 @@ public class ProjectView extends VerticalLayout implements View {
     projectview_tab.addTab(biologicalSamplesComponent).setIcon(FontAwesome.TINT);
     projectview_tab.addTab(measuredSamplesComponent).setIcon(FontAwesome.SIGNAL);
     projectview_tab.addTab(resultsComponent).setIcon(FontAwesome.TH_LARGE);
-    projectview_tab.addTab(workflowComponent).setIcon(FontAwesome.COGS);
+    //projectview_tab.addTab(workflowComponent).setIcon(FontAwesome.COGS); deactivate workflow by cfh
     projectview_tab.addTab(uploadComponent).setIcon(FontAwesome.UPLOAD);
 
     projectview_tab.setImmediate(true);

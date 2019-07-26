@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
+import life.qbic.projectbrowser.model.ProjectBean;
 import life.qbic.projectbrowser.model.notes.Note;
 import life.qbic.projectbrowser.model.notes.Notes;
 
@@ -27,7 +28,6 @@ import org.docx4j.wml.P;
 import life.qbic.xml.manager.XMLParser;
 import life.qbic.xml.properties.Property;
 import life.qbic.projectbrowser.helpers.Docx4jHelper;
-
 import ch.systemsx.cisd.openbis.dss.client.api.v1.DataSet;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.Experiment;
 import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.PropertyType;
@@ -36,6 +36,7 @@ import life.qbic.openbis.openbisclient.OpenBisClient;
 
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
@@ -98,6 +99,7 @@ public class SummaryFetcher {
   private Component summaryComponent;
   private String tmpFolder;
   private boolean success = false;
+  private ProjectBean currentBean;
 
   public SummaryFetcher(OpenBisClient openbis, String tmpFolder) {
     this.tmpFolder = tmpFolder;
@@ -135,10 +137,11 @@ public class SummaryFetcher {
   }
 
   public void fetchSummaryComponent(String code, String name, String description,
-      final ProjectSummaryReadyRunnable ready) {
+      final ProjectSummaryReadyRunnable ready,final ProjectBean currentBean) {
     this.projectCode = code;
     this.projectName = name;
     this.projectDescription = description;
+    this.currentBean = currentBean;
     Thread t = new Thread(new Runnable() {
 
       @Override
@@ -161,6 +164,34 @@ public class SummaryFetcher {
     res.setCaption("Summary");
     res.setSpacing(true);
     res.setMargin(true);
+    
+    
+	//get contacts and project description 
+	Label investigator = new Label("",ContentMode.HTML);
+	String pi = currentBean.getPrincipalInvestigator();
+	if(!pi.equals("n/a")){
+		investigator.setValue("Principal Investigator: " + pi);
+	}else{
+		investigator.setValue("No Principal Investigator was found.");
+	}
+    res.addComponent(investigator);
+    
+    Label contact = new Label("",ContentMode.HTML);
+	String con = currentBean.getContact();
+	if(!con.equals("n/a")&&!con.equals("")){
+		contact.setValue("Contact Person: " + con);
+	}else{
+		contact.setValue("No Contact Person was found.");
+	}
+    res.addComponent(contact);
+   
+    Label description = new Label();
+    if(!projectDescription.isEmpty()){
+    	description.setValue("Project Description: " + projectDescription);
+    }else{
+    	description.setValue("No Project Description");
+    }
+    res.addComponent(description);
 
     // collect and connect everything (if samples exist)
     List<Sample> samples =

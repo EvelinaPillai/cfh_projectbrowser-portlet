@@ -238,7 +238,7 @@ public class HomeView extends VerticalLayout implements View {
         ProjectBean proj = (ProjectBean) event.getItemId();
         summaryFetcher.fetchSummaryComponent(proj.getCode(), proj.getSecondaryName(),
             proj.getDescription(),
-            new ProjectSummaryReadyRunnable(summaryFetcher, loadingWindow, proj.getCode()));
+            new ProjectSummaryReadyRunnable(summaryFetcher, loadingWindow, proj.getCode()), datahandler.getProjectFromDB(proj.getId())); //maybe slower as connectiong to db again ?
       }
     }));
     projectGrid.getColumn("Summary").setWidth(100);

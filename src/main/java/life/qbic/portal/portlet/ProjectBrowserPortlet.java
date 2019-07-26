@@ -285,14 +285,15 @@ public class ProjectBrowserPortlet extends QBiCPortletUI {
     final SearchResultsView searchResultsView =
         new SearchResultsView(datahandler, "Search results", user, state, resUrl);
 
-    Submitter submitter = null;
-    try {
-      submitter = WorkflowSubmitterFactory.getSubmitter(Type.guseSubmitter, manager);
-    } catch (Exception e1) {
-      e1.printStackTrace();
-    }
-
-    WorkflowViewController controller = new WorkflowViewController(submitter, datahandler, user);
+    //deactivate workflow tab by cfh
+//    Submitter submitter = null;
+//    try {
+//      submitter = WorkflowSubmitterFactory.getSubmitter(Type.guseSubmitter, manager);
+//    } catch (Exception e1) {
+//      e1.printStackTrace();
+//    }
+//
+    WorkflowViewController controller = null;
 
     final ProjectView projectView =
         new ProjectView(datahandler, state, resUrl, controller, manager);
