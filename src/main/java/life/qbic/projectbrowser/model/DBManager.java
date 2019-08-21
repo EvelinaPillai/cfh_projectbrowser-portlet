@@ -325,5 +325,46 @@ public class DBManager {
     logout(conn);
     return res;
   }
+  
+  public String getProjectStatus(String projectIdentifier) {
+	    String sql = "SELECT status from projects WHERE openbis_project_identifier = ?";
+	    String res = "";
+	    Connection conn = login();
+	    try {
+	      PreparedStatement statement = conn.prepareStatement(sql);
+	      statement.setString(1, projectIdentifier);
+	      ResultSet rs = statement.executeQuery();
+	      if (rs.next()) {
+	        res = rs.getString(1);
+	      }
+	    } catch (SQLException e) {
+	      LOG.error("SQL operation unsuccessful: " + e.getMessage());
+	      e.printStackTrace();
+	    }
+	    logout(conn);
+	    return res;
+	  }
+  
+  public boolean changeProjectStatus(String projectIdentifier, String status) {
+	    LOG.info("Adding/Updating status of project " + projectIdentifier);
+	    String sql = "UPDATE projects SET status = ? WHERE openbis_project_identifier = ?";
+	    Connection conn = login();
+	    PreparedStatement statement = null;
+	    int res = -1;
+	    try {
+	      statement = conn.prepareStatement(sql);
+	      statement.setString(1, status);
+	      statement.setString(2, projectIdentifier);
+	      statement.execute();
+	      res = statement.getUpdateCount();
+	      LOG.info("Successful.");
+	    } catch (SQLException e) {
+	      LOG.error("SQL operation unsuccessful: " + e.getMessage());
+	      e.printStackTrace();
+	    } finally {
+	      endQuery(conn, statement);
+	    }
+	    return res != -1;
+	  }
 
 }

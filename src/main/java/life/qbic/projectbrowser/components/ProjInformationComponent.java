@@ -34,6 +34,7 @@ import javax.portlet.PortletSession;
 
 import life.qbic.portal.portlet.ProjectBrowserPortlet;
 import life.qbic.portal.utils.PortalUtils;
+
 import org.tepi.filtertable.FilterTreeTable;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -57,6 +58,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -150,6 +152,8 @@ public class ProjInformationComponent extends CustomComponent {
 
   private Panel statusPanel;
   private Panel descriptionPanel;
+  
+  private ComboBox projStatus;
 
   public ProjInformationComponent(DataHandler dh, State state, String resourceurl) {
     this.datahandler = dh;
@@ -171,7 +175,9 @@ public class ProjInformationComponent extends CustomComponent {
     descriptionPanel = new Panel();
     datasetTable = buildFilterTable();
     peopleInCharge = new Accordion();
-
+    projStatus = new ComboBox("Change Project Status");
+    projStatus.addItems("REQUESTED", "IN PROGRESS", "BILLING", "FINISHED");
+    
     setResponsive(true);
     vert.setResponsive(true);
     descHorz.setResponsive(true);
@@ -326,7 +332,17 @@ public class ProjInformationComponent extends CustomComponent {
         }
         descContent.setValue(desc);
       }
+      //add click listener CFH
+      projStatus.addValueChangeListener(new ValueChangeListener() {
+          
 
+          @Override
+          public void valueChange(ValueChangeEvent event) {
+          	String projectState = (String) event.getProperty().getValue();
+          	ProjectBean currentBean = datahandler.getProjectFromDB(projectBean.getId());
+          	datahandler.getDatabaseManager().changeProjectStatus(currentBean.getId(),projectState);
+          }
+      });
       longDescription = new EditableLabel(projectBean.getLongDescription());
       longDescription.addBlurListener(new BlurListener() {
 
@@ -352,6 +368,8 @@ public class ProjInformationComponent extends CustomComponent {
       statusPanel.setResponsive(true);
       statusPanel.setResponsive(true);
       statusContent.setWidth(25, Unit.PERCENTAGE);
+      
+      
 
 
       initTSVDownloads(space, currentBean.getCode());
@@ -527,6 +545,7 @@ public class ProjInformationComponent extends CustomComponent {
     // descContent.setWidth("80%");
     projDescriptionContent.addComponent(descriptionPanel);
     projDescriptionContent.addComponent(statusPanel);
+    projDescriptionContent.addComponent(projStatus);//CFH
     // longDescription.setWidth("80%");
     // projDescriptionContent.addComponent(experimentLabel);
     // projDescriptionContent.addComponent(statusContent);

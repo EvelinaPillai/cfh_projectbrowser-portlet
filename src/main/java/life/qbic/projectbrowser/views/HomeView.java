@@ -405,6 +405,7 @@ public class HomeView extends VerticalLayout implements View {
       String projectIdentifier = project.getIdentifier();
       String projectCode = project.getCode();
       String desc = project.getDescription();
+   
       if (desc == null) {
         desc = "";
       } else if (desc.length() > 0) {
@@ -439,18 +440,19 @@ public class HomeView extends VerticalLayout implements View {
       } else {
         newProjectBean.setProjectManager(pm);
       }
-      
-     List<Experiment> experiments = datahandler.getOpenBisClient().getExperimentsForProject2(project);
-     String experimentState = "";
-     if(!experiments.isEmpty() && experiments != null){
-    	 experimentState = experiments.get(0).getProperties().get("Q_CURRENT_STATUS");
-    	 }
+     
+      String project_status = datahandler.getDatabaseManager().getProjectStatus(projectIdentifier);
+     //List<Experiment> experiments = datahandler.getOpenBisClient().getExperimentsForProject2(project);
+      //String experimentState = "";
+      //if(!experiments.isEmpty() && experiments != null){
+      // experimentState = experiments.get(0).getProperties().get("Q_CURRENT_STATUS");
+      //	 }
  
-     if (experimentState != null && !experimentState.equals("")){
-    	 newProjectBean.setStatus(experimentState);
-     }else{
-    	 newProjectBean.setStatus("IN PROGRESS");
-     }
+      //if (experimentState != null && !experimentState.equals("")){
+     newProjectBean.setStatus(project_status);
+    // }else{
+    // newProjectBean.setStatus("IN PROGRESS");
+    //}
 
       projectContainer.addBean(newProjectBean);
       
