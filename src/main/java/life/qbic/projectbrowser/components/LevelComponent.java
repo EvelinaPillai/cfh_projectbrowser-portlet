@@ -266,6 +266,7 @@ public class LevelComponent extends CustomComponent {
                         final GeneratedPropertyContainer gpc = new GeneratedPropertyContainer(samples);
                         gpc.removeContainerProperty("id");
                         gpc.removeContainerProperty("type");
+                        sampleGrid.removeAllColumns(); //cfh destroy the grid otherwise it has error and shows raw data from other projects 
                         sampleGrid.setContainerDataSource(gpc);
                         sampleGrid.setColumnReorderingAllowed(true);
 
