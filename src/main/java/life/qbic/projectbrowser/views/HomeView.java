@@ -158,8 +158,9 @@ public class HomeView extends VerticalLayout implements View {
     gpcProjects.removeContainerProperty("id");
     gpcProjects.removeContainerProperty("experiments");
     gpcProjects.removeContainerProperty("contact");
-    gpcProjects.removeContainerProperty("contactPerson");
+   //gpcProjects.removeContainerProperty("contactPerson"); changed by CFH
    // gpcProjects.removeContainerProperty("projectManager");
+    gpcProjects.removeContainerProperty("principalInvestigator"); 
     gpcProjects.removeContainerProperty("containsData");
     gpcProjects.removeContainerProperty("containsResults");
     gpcProjects.removeContainerProperty("containsAttachments");
@@ -187,10 +188,10 @@ public class HomeView extends VerticalLayout implements View {
     nameCol.setMaximumWidth(450);
     projectGrid.getColumn("space").setMaximumWidth(350);
     projectGrid.getColumn("space").setHeaderCaption("Project");
-    projectGrid.getColumn("principalInvestigator").setHeaderCaption("Investigator");
+    projectGrid.getColumn("contactPerson").setHeaderCaption("Contact Person");
     projectGrid.getColumn("projectManager").setHeaderCaption("Project Manager");
     projectGrid.getColumn("status").setHeaderCaption("Status");
-    projectGrid.setColumnOrder("code", "space", "secondaryName", "principalInvestigator","projectManager", "status");
+    projectGrid.setColumnOrder("code", "space", "secondaryName", "contactPerson", "projectManager", "status");
 
     projectGrid.setResponsive(true);
 
@@ -425,12 +426,20 @@ public class HomeView extends VerticalLayout implements View {
           new ProgressBar(), new Date(), "", "", null, false, false, false, "", "");
 
       // TODO isn't this slow in this fashion? what about SELECT * and creating a map?
-      String pi = datahandler.getDatabaseManager().getInvestigatorForProject(projectIdentifier);
-
-      if (pi.equals("")) {
-        newProjectBean.setPrincipalInvestigator("n/a");
-      } else {
-        newProjectBean.setPrincipalInvestigator(pi);
+      //instead of pi we want contact person now
+//      String pi = datahandler.getDatabaseManager().getInvestigatorForProject(projectIdentifier);
+//
+//      if (pi.equals("")) {
+//        newProjectBean.setPrincipalInvestigator("n/a");
+//      } else {
+//        newProjectBean.setPrincipalInvestigator(pi);
+//      }
+      String cp = datahandler.getDatabaseManager().getContactForProject(projectIdentifier);
+      
+      if (cp.equals("")){
+    	  newProjectBean.setContactPerson("n/a");
+      }else {
+    	  newProjectBean.setContactPerson(cp);
       }
       
       String pm = datahandler.getDatabaseManager().getProjectManager(projectIdentifier);

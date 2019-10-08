@@ -93,6 +93,11 @@ public class DBManager {
     return details.split("<br>")[0].trim().replace("<p>", "");
   }
   
+  public String getContactForProject(String projectIdentifier) {
+	  String details = getPersonDetailsForProject(projectIdentifier, "Contact");
+	  return details.split("<br>")[0].trim().replace("<p>", "");
+  }
+  
   public String getProjectManager(String projectIdentifier) {
 	    String details = getPersonDetailsForProject(projectIdentifier, "Manager");
 	    return details.split("<br>")[0].trim().replace("<p>", "");
