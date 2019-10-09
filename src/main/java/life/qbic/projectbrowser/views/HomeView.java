@@ -158,9 +158,9 @@ public class HomeView extends VerticalLayout implements View {
     gpcProjects.removeContainerProperty("id");
     gpcProjects.removeContainerProperty("experiments");
     gpcProjects.removeContainerProperty("contact");
-   //gpcProjects.removeContainerProperty("contactPerson"); changed by CFH
-   // gpcProjects.removeContainerProperty("projectManager");
-    gpcProjects.removeContainerProperty("principalInvestigator"); 
+    //gpcProjects.removeContainerProperty("contactPerson"); changed by CFH
+    //gpcProjects.removeContainerProperty("projectManager");
+    //gpcProjects.removeContainerProperty("principalInvestigator"); 
     gpcProjects.removeContainerProperty("containsData");
     gpcProjects.removeContainerProperty("containsResults");
     gpcProjects.removeContainerProperty("containsAttachments");
@@ -180,18 +180,19 @@ public class HomeView extends VerticalLayout implements View {
     // projectGrid.getColumn("secondaryName").setWidthUndefined();
     // projectGrid.getColumn("principalInvestigator").setWidthUndefined();
 
-    projectGrid.getColumn("code").setHeaderCaption("Sub-Project").setWidth(200);
+    projectGrid.getColumn("code").setHeaderCaption("Sub-Project").setWidth(180);
     // projectGrid.getColumn("space").setWidth(200);
 
     Column nameCol = projectGrid.getColumn("secondaryName");
     nameCol.setHeaderCaption("Short Name");
     nameCol.setMaximumWidth(450);
-    projectGrid.getColumn("space").setMaximumWidth(350);
+    projectGrid.getColumn("space").setMaximumWidth(150);
     projectGrid.getColumn("space").setHeaderCaption("Project");
     projectGrid.getColumn("contactPerson").setHeaderCaption("Contact Person");
+    projectGrid.getColumn("principalInvestigator").setHeaderCaption("Principal Investigator");
     projectGrid.getColumn("projectManager").setHeaderCaption("Project Manager");
-    projectGrid.getColumn("status").setHeaderCaption("Status");
-    projectGrid.setColumnOrder("code", "space", "secondaryName", "contactPerson", "projectManager", "status");
+    projectGrid.getColumn("status").setHeaderCaption("Status").setWidth(150);
+    projectGrid.setColumnOrder("code", "space", "secondaryName", "contactPerson", "principalInvestigator", "projectManager", "status");
 
     projectGrid.setResponsive(true);
 
@@ -426,14 +427,15 @@ public class HomeView extends VerticalLayout implements View {
           new ProgressBar(), new Date(), "", "", null, false, false, false, "", "");
 
       // TODO isn't this slow in this fashion? what about SELECT * and creating a map?
-      //instead of pi we want contact person now
-//      String pi = datahandler.getDatabaseManager().getInvestigatorForProject(projectIdentifier);
-//
-//      if (pi.equals("")) {
-//        newProjectBean.setPrincipalInvestigator("n/a");
-//      } else {
-//        newProjectBean.setPrincipalInvestigator(pi);
-//      }
+
+      String pi = datahandler.getDatabaseManager().getInvestigatorForProject(projectIdentifier);
+
+      if (pi.equals("")) {
+        newProjectBean.setPrincipalInvestigator("n/a");
+      } else {
+        newProjectBean.setPrincipalInvestigator(pi);
+      }
+      
       String cp = datahandler.getDatabaseManager().getContactForProject(projectIdentifier);
       
       if (cp.equals("")){

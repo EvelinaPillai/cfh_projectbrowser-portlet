@@ -177,7 +177,7 @@ public class SummaryFetcher {
     res.addComponent(investigator);
     
     Label contact = new Label("",ContentMode.HTML);
-	String con = currentBean.getContact();
+	String con = currentBean.getContactPerson();
 	if(!con.equals("n/a")&&!con.equals("")){
 		contact.setValue("Contact Person: " + con);
 	}else{
