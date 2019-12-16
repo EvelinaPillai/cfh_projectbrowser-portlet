@@ -39,6 +39,7 @@ import com.vaadin.server.FileResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
@@ -54,6 +55,9 @@ public class SummaryFetcher {
   private UglyToPrettyNameMapper prettyNameMapper = new UglyToPrettyNameMapper();
   private String projectName;
   private String projectDescription;
+  //Only create one table in the summary output
+  private List<List<String>> finalHeader = new ArrayList<List<String>>();
+  private List<List<List<String>>> finalData = new ArrayList<List<List<String>>>();
   private final Map<String, String> expTypeTranslation = new HashMap<String, String>() {
     {
       put("Q_NGS_MEASUREMENT", "Next Generation Sequencing Run");
@@ -91,7 +95,7 @@ public class SummaryFetcher {
       put("Q_WF_MS_LIGANDOMICS_QC", "Ligandomics Quality Control Workflow");
       put("Q_MHC_LIGAND_EXTRACTION", "MHC Ligand Extraction");
       put("Q_CFH_ELEMENT", "Element Analysis");
-      put(" Q_CFH_NMIN", "Nmin Analysis");
+      put("Q_CFH_NMIN", "Nmin Analysis");
     };
   };
   private WordprocessingMLPackage wordMLPackage;
@@ -100,6 +104,7 @@ public class SummaryFetcher {
   private String tmpFolder;
   private boolean success = false;
   private ProjectBean currentBean;
+  private List<Table> tableList = new ArrayList<Table>();
 
   public SummaryFetcher(OpenBisClient openbis, String tmpFolder) {
     this.tmpFolder = tmpFolder;
@@ -193,6 +198,8 @@ public class SummaryFetcher {
     }
     res.addComponent(description);
 
+    generateProjectDetails(investigator, contact, description, wordMLPackage.getMainDocumentPart());
+    
     // collect and connect everything (if samples exist)
     List<Sample> samples =
         openbis.getSamplesWithParentsAndChildrenOfProjectBySearchService(projectCode);
@@ -260,17 +267,48 @@ public class SummaryFetcher {
 
           Table sampleTable = generateSampleTable(expToSamples.get(e), sampIDToDS,
               expIDToDS.get(e.getIdentifier()), wordMLPackage.getMainDocumentPart());
-          section.addComponent(sampleTable);
+          //section.addComponent(sampleTable);
           res.addComponent(section);
+          tableList.add(sampleTable);
         }
       }
+     
       success = true;
     }
+    //creating one big table at the end of file and adding all tables at the end of the view  
+    for (int i = 0; i <finalHeader.size(); i++) 
+    	wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(finalHeader.get(i), finalData.get(i)));
+    for (Table t : tableList){
+    	VerticalLayout section = new VerticalLayout();
+      	section.addComponent(t);
+      	res.addComponent(section);
+      }
+    
+    
     addSummaryDownload(res);
     return res;
   }
 
-  private String createTimeStamp() {
+  private void generateProjectDetails(Label investigator, Label contact,
+		Label description, MainDocumentPart mainDocumentPart) {
+	 //remove HTML entries in text and create Paragraph for each line 
+	 String[] l1 = investigator.getValue().split("<br>|<p>|</p>");
+	 
+	 for (String i : l1){
+		P inv = docxHelper.createParagraph(i, false, false, "24");  
+	 	mainDocumentPart.addObject(inv);
+	 }
+	 String[] l2 = contact.getValue().split("<br>|<p>|</p>");
+	 for (String i : l2){
+		 P cont = docxHelper.createParagraph(i, false, false, "24");  
+		 mainDocumentPart.addObject(cont);
+	 }
+	
+	 P desc = docxHelper.createParagraph(description.getValue(), false, false, "24");  
+	 mainDocumentPart.addObject(desc);
+  }
+
+private String createTimeStamp() {
     Date date = new Date();
     return new Timestamp(date.getTime()).toString().split(" ")[1].replace(":", "").replace(".", "");
   }
@@ -345,10 +383,14 @@ public class SummaryFetcher {
     Collections.sort(metadata);
     for (String line : metadata) {
       // vaadin
-      Label l = new Label(line);
+      Label l = new Label(line, ContentMode.HTML);
       section.addComponent(l);
+
       // docx
-      mainDocumentPart.addObject(docxHelper.createParagraph(line, false, false, "32"));
+      //additional info splitter
+      String[] addLine =line.split("<br>");
+      for (String i : addLine)
+    	  mainDocumentPart.addObject(docxHelper.createParagraph(i, false, false, "32"));
     }
     expPanel.setContent(section);
   }
@@ -495,7 +537,8 @@ public class SummaryFetcher {
         switch (sType) {
           case "Q_BIOLOGICAL_ENTITY":
             if (!specialSet)
-              row.add(allMap.get(props.get("Q_NCBI_ORGANISM")));
+            	row.add(parseSpecies(s)); //to get the detailed Organism if "other" was selected
+            	//              row.add(allMap.get(props.get("Q_NCBI_ORGANISM")));
             break;
           case "Q_BIOLOGICAL_SAMPLE":
             if (!specialSet)
@@ -515,8 +558,11 @@ public class SummaryFetcher {
       table.setPageLength(samples.size());
     }
     // docx
-    wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(header, data));
-    wordMLPackage.getMainDocumentPart().addObject(new Br());
+    //wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(header, data));
+    //wordMLPackage.getMainDocumentPart().addObject(new Br());
+    finalHeader.add(header);
+    finalData.add(data);
+
     return table;
   }
 
@@ -538,6 +584,21 @@ public class SummaryFetcher {
     else
       return tissue;
   }
+  
+  
+  private String parseSpecies(Sample s) {
+	    String species = s.getProperties().get("Q_NCBI_ORGANISM");
+	    String other = s.getProperties().get("Q_ORGANISM_DETAILED");
+	    if (species.equals("0")) //because it's NCBI, the code is 0 instead of "OTHER"
+	      if (other == null || other.isEmpty())
+	    	  species = "Other";
+	      else
+	    	  species = other;
+	    if (allMap.containsKey(species))
+	      return allMap.get(species);
+	    else
+	      return species;
+	  }
 
   /**
    * returns ready to use summary component
