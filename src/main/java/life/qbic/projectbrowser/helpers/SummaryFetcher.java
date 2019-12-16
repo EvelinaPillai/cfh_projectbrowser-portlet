@@ -261,7 +261,7 @@ public class SummaryFetcher {
                                                                              // information could be
                                                                              // added
           VerticalLayout section = new VerticalLayout();
-          // create vaadin and docx section
+          // create vaadin and docx section          
           generateExperimentHeaderWithMetadata(e, section, wordMLPackage.getMainDocumentPart(),
               expTypeToProperties);
 
@@ -275,14 +275,17 @@ public class SummaryFetcher {
      
       success = true;
     }
-    //creating one big table at the end of file and adding all tables at the end of the view  
+    //creating one big table at the end of file and adding all tables at the end of the view 
     for (int i = 0; i <finalHeader.size(); i++) 
     	wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(finalHeader.get(i), finalData.get(i)));
+    finalHeader = new ArrayList<List<String>>();
+    finalData = new ArrayList<List<List<String>>>();
     for (Table t : tableList){
     	VerticalLayout section = new VerticalLayout();
       	section.addComponent(t);
       	res.addComponent(section);
       }
+    tableList = new ArrayList<Table>();
     
     
     addSummaryDownload(res);
