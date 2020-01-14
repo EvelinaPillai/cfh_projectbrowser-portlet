@@ -472,12 +472,9 @@ public class DataHandler implements Serializable {
 
     Date registrationDate = project.getRegistrationDetails().getRegistrationDate();
 
-    // String pi = getDatabaseManager().getInvestigatorDetailsForProject(project.getCode());
     String pi = getDatabaseManager().getPersonDetailsForProject(project.getIdentifier(), "PI");
     String cp = getDatabaseManager().getPersonDetailsForProject(project.getIdentifier(), "Contact");
-    // String manager = getDatabaseManager().getPersonDetailsForProject(project.getIdentifier(),
-    // "Manager");//TODO
-    String manager = "";
+    String manager = getDatabaseManager().getPersonDetailsForProject(project.getIdentifier(), "Manager");   
     String longDesc = getDatabaseManager().getLongProjectDescription(project.getIdentifier());
 
     if (pi.equals("")) {
@@ -610,7 +607,6 @@ public class DataHandler implements Serializable {
 
     Date registrationDate = project.getRegistrationDetails().getRegistrationDate();
 
-    // String pi = getDatabaseManager().getInvestigatorDetailsForProject(project.getCode());
     String pi = getDatabaseManager().getPersonDetailsForProject(project.getIdentifier(), "PI");
     String cp = getDatabaseManager().getPersonDetailsForProject(project.getIdentifier(), "Contact");
     String manager =

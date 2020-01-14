@@ -177,7 +177,7 @@ public class SummaryFetcher {
 	if(!pi.equals("n/a")){
 		investigator.setValue("Principal Investigator: " + pi);
 	}else{
-		investigator.setValue("No Principal Investigator was found.");
+		investigator.setValue("No principal investigator was found.");
 	}
     res.addComponent(investigator);
     
@@ -186,9 +186,18 @@ public class SummaryFetcher {
 	if(!con.equals("n/a")&&!con.equals("")){
 		contact.setValue("Contact Person: " + con);
 	}else{
-		contact.setValue("No Contact Person was found.");
+		contact.setValue("No contact person was found.");
 	}
     res.addComponent(contact);
+    
+    Label manager = new Label("",ContentMode.HTML);
+	String pm = currentBean.getProjectManager();
+	if(!pm.equals("n/a")){
+		manager.setValue("Project Manager: " + pm);
+	}else{
+		manager.setValue("No Project manager was found.");
+	}
+    res.addComponent(manager);
    
     Label description = new Label();
     if(!projectDescription.isEmpty()){
@@ -198,7 +207,7 @@ public class SummaryFetcher {
     }
     res.addComponent(description);
 
-    generateProjectDetails(investigator, contact, description, wordMLPackage.getMainDocumentPart());
+    generateProjectDetails(investigator, contact, manager, description, wordMLPackage.getMainDocumentPart());
     
     // collect and connect everything (if samples exist)
     List<Sample> samples =
@@ -292,11 +301,10 @@ public class SummaryFetcher {
     return res;
   }
 
-  private void generateProjectDetails(Label investigator, Label contact,
+  private void generateProjectDetails(Label investigator, Label contact, Label manager,
 		Label description, MainDocumentPart mainDocumentPart) {
 	 //remove HTML entries in text and create Paragraph for each line 
 	 String[] l1 = investigator.getValue().split("<br>|<p>|</p>");
-	 
 	 for (String i : l1){
 		P inv = docxHelper.createParagraph(i, false, false, "24");  
 	 	mainDocumentPart.addObject(inv);
@@ -305,6 +313,12 @@ public class SummaryFetcher {
 	 for (String i : l2){
 		 P cont = docxHelper.createParagraph(i, false, false, "24");  
 		 mainDocumentPart.addObject(cont);
+	 }
+	 
+	 String[] l3 = manager.getValue().split("<br>|<p>|</p>");
+	 for (String i : l3){
+		 P man = docxHelper.createParagraph(i, false, false, "24");  
+		 mainDocumentPart.addObject(man);
 	 }
 	
 	 P desc = docxHelper.createParagraph(description.getValue(), false, false, "24");  
