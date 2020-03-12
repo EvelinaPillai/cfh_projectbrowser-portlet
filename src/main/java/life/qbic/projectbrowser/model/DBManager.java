@@ -163,6 +163,29 @@ public class DBManager {
     return res;
   }
 
+  public List<String> getActiveProjectsFromMod3(){
+	  String sql = "SELECT * FROM qbic_usermanagement_db.projects where status != 'FINISHED' AND openbis_project_identifier like '%-3-%'";
+	  List<String> projectNames = new ArrayList<String>();
+	  
+	    Connection conn = login();
+	    try (PreparedStatement statement = conn.prepareStatement(sql)) {
+	 
+	      ResultSet rs = statement.executeQuery();
+
+	      while (rs.next()) {
+	         projectNames.add(rs.getString("openbis_project_identifier"));
+	      }
+	      
+	    } catch (SQLException e) {
+	      e.printStackTrace();
+	      logout(conn);
+	      // LOG.debug("Project not associated with Investigator. PI will be set to 'Unknown'");
+	    }
+	    return projectNames;  
+  
+  }
+  
+  
   public String getPersonDetailsForProject(String projectIdentifier, String role) {
     String sql =
         "SELECT projects_persons.*, projects.* FROM projects_persons, projects WHERE projects.openbis_project_identifier = ?"

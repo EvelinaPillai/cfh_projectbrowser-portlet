@@ -124,7 +124,7 @@ public class HomeView extends VerticalLayout implements View {
    * execute the above constructor with default settings, in order to have the same settings
    */
   public HomeView(DataHandler datahandler) {
-    this(datahandler, "You seem to have no registered projects. Please contact QBiC.", "",
+    this(datahandler, "You seem to have no registered projects. Please contact CFH.", "",
         new State(), "", "");
   }
 

@@ -313,6 +313,10 @@ public class ProjectBrowserPortlet extends QBiCPortletUI {
     navigator.addView(PatientView.navigateToLabel, patientView);
     navigator.addView(AddPatientView.navigateToLabel, addPatientView);
     navigator.addView(SearchResultsView.navigateToLabel, searchResultsView);
+    
+    final AChView achView =
+            new AChView(datahandler,"Analytical Chemistry Projects", user, state, resUrl, controller, manager);
+    navigator.addView(AChView.navigateToLabel, achView);
 
     setNavigator(navigator);
 
@@ -346,9 +350,25 @@ public class ProjectBrowserPortlet extends QBiCPortletUI {
       }
 
     });
+    
+    Button aChButton = new Button("ACh");
+    aChButton.setResponsive(true);
+    aChButton.setStyleName(ValoTheme.BUTTON_LARGE);
+    aChButton.setVisible(datahandler.getOpenBisClient().isUserAdmin(user));
+    aChButton.addClickListener(new Button.ClickListener() {
+
+      @Override
+      public void buttonClick(ClickEvent event) {
+    	  navigator.navigateTo(AChView.navigateToLabel);
+      }
+
+    });
 
     // Production
     buttonLayout.addComponent(homeButton);
+    buttonLayout.addComponent(aChButton);
+    
+    
 
     Boolean includePatientCreation = false;
 
