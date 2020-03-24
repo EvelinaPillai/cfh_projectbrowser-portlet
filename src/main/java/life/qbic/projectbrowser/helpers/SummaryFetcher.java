@@ -39,10 +39,10 @@ import com.vaadin.server.FileResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -58,6 +58,8 @@ public class SummaryFetcher {
   //Only create one table in the summary output
   private List<List<String>> finalHeader = new ArrayList<List<String>>();
   private List<List<List<String>>> finalData = new ArrayList<List<List<String>>>();
+  private List<String> species = new ArrayList<String>();
+  private List<String> tissues = new ArrayList<String>();
   private final Map<String, String> expTypeTranslation = new HashMap<String, String>() {
     {
       put("Q_NGS_MEASUREMENT", "Next Generation Sequencing Run");
@@ -284,22 +286,46 @@ public class SummaryFetcher {
      
       success = true;
     }
-    //creating one big table at the end of file and adding all tables at the end of the view 
-    for (int i = 0; i <finalHeader.size(); i++) 
-    	wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(finalHeader.get(i), finalData.get(i)));
-    finalHeader = new ArrayList<List<String>>();
-    finalData = new ArrayList<List<List<String>>>();
-    for (Table t : tableList){
-    	VerticalLayout section = new VerticalLayout();
-      	section.addComponent(t);
-      	res.addComponent(section);
-      }
-    tableList = new ArrayList<Table>();
+    //add species and tissues into Summary and Document
+    VerticalLayout sectionS = generateSampleDetails("Species: ", species, wordMLPackage.getMainDocumentPart());
+    VerticalLayout sectionT = generateSampleDetails("Tissues: ", tissues, wordMLPackage.getMainDocumentPart());
+    
+    res.addComponent(sectionS);
+    res.addComponent(sectionT);
+    
+    //NO MORE TABLE AT ALL TODO remove this 
+    //    //creating one big table at the end of file and adding all tables at the end of the view 
+//    for (int i = 0; i <finalHeader.size(); i++) 
+//    	wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(finalHeader.get(i), finalData.get(i)));
+//    finalHeader = new ArrayList<List<String>>();
+//    finalData = new ArrayList<List<List<String>>>();
+//    for (Table t : tableList){
+//    	VerticalLayout section = new VerticalLayout();
+//      	section.addComponent(t);
+//      	res.addComponent(section);
+//      }
+//    tableList = new ArrayList<Table>();
     
     
     addSummaryDownload(res);
     return res;
   }
+
+  //collects from all samples in the project species and tissues 
+  private VerticalLayout generateSampleDetails(String title, List<String> details, MainDocumentPart mainDocumentPart ) {
+	VerticalLayout sectionS = new VerticalLayout();
+	Label label = new Label(title);
+	label.setStyleName(ValoTheme.LABEL_BOLD);
+    wordMLPackage.getMainDocumentPart().addObject(docxHelper.createParagraph(label.getValue(), true, false, "32"));
+    sectionS.addComponent(label);
+    for (String line : details) {
+        // vaadin
+        Label l = new Label(line, ContentMode.HTML);
+        sectionS.addComponent(l);
+      	mainDocumentPart.addObject(docxHelper.createParagraph(line, false, false, "32"));
+    }
+	return sectionS;
+}
 
   private void generateProjectDetails(Label investigator, Label contact, Label manager,
 		Label description, MainDocumentPart mainDocumentPart) {
@@ -432,12 +458,14 @@ private String createTimeStamp() {
       List<DataSet> expDS, MainDocumentPart mainDocumentPart) {
     String tableHeadline = prettyNameMapper.getPrettyName(samples.get(0).getSampleTypeCode()) + "s"; // plural
     mainDocumentPart.addObject(docxHelper.createParagraph(tableHeadline, false, false, "32"));
-
+      
     Table table = new Table(tableHeadline);
     table.setStyleName(ValoTheme.TABLE_SMALL);
 
     List<String> header = new ArrayList<String>();
     List<List<String>> data = new ArrayList<List<String>>();
+   
+    
     int numDS = 0;
     if (expDS != null)
       numDS = expDS.size();
@@ -527,10 +555,12 @@ private String createTimeStamp() {
         header.add(typeToAdd);
         table.addContainerProperty(typeToAdd, String.class, null);
       }
+     
       for (Sample s : samples) {
         // Create the table row.
         Map<String, String> props = s.getProperties();
         List<String> row = new ArrayList<String>();
+       
 
         row.add(s.getCode());
         row.add(props.get("Q_SECONDARY_NAME"));
@@ -551,15 +581,20 @@ private String createTimeStamp() {
         int dataCount = 0;
         if (sampIDToDS.containsKey(s.getIdentifier()))
           dataCount = sampIDToDS.get(s.getIdentifier()).size();
-        switch (sType) {
+        
+      	switch (sType) {
           case "Q_BIOLOGICAL_ENTITY":
-            if (!specialSet)
+            if (!specialSet)            	
             	row.add(parseSpecies(s)); //to get the detailed Organism if "other" was selected
-            	//              row.add(allMap.get(props.get("Q_NCBI_ORGANISM")));
+            	if(!species.contains(parseSpecies(s)))
+            		species.add(parseSpecies(s));
+            										// row.add(allMap.get(props.get("Q_NCBI_ORGANISM")));
             break;
           case "Q_BIOLOGICAL_SAMPLE":
             if (!specialSet)
-              row.add(parseTissue(s));
+            	row.add(parseTissue(s));
+              	if(!tissues.contains(parseTissue(s)))
+              		tissues.add(parseTissue(s));
             break;
           case "Q_TEST_SAMPLE":
             row.add(props.get("Q_SAMPLE_TYPE"));
@@ -572,12 +607,14 @@ private String createTimeStamp() {
         data.add(row);
         table.addItem(row.toArray(new Object[row.size()]), s);
       }
+  	  
       table.setPageLength(samples.size());
     }
+
     // docx
     //wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(header, data));
     //wordMLPackage.getMainDocumentPart().addObject(new Br());
-    finalHeader.add(header);
+    finalHeader.add(header); //TODO delete if ok without table 
     finalData.add(data);
 
     return table;

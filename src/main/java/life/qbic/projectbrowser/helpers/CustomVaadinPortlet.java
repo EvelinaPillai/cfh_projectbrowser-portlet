@@ -198,7 +198,7 @@ public class CustomVaadinPortlet extends VaadinPortlet {
 
       String timestamp = new SimpleDateFormat("yyyyMMddhhmm").format(new Date());
 
-      String filename = "qbicdatasets" + timestamp + ".tar";
+      String filename = "cfhdatasets" + timestamp + ".tar";
 
       // response.setContentType(writer.getContentType());
       StringBuilder sb = new StringBuilder("attachement; filename=\"");

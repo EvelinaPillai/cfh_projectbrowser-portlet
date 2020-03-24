@@ -215,7 +215,7 @@ public class ProjectView extends VerticalLayout implements View {
     resultsComponent = new LevelComponent(datahandler, state, resourceUrl, "Results");
    // workflowComponent = new WorkflowComponent(wfController); //deactivate workflow by cfh
     uploadComponent = new AttachmentUploadComponent();
-    projectInformation = new ProjInformationComponent(datahandler, state, resourceUrl);
+    projectInformation = new ProjInformationComponent(datahandler, state, resourceUrl,  PortalUtils.getUser().getScreenName().toString());
     experimentComponent = new ExperimentComponent(datahandler, state, resourceUrl);
 
     // add styles to tab sheet

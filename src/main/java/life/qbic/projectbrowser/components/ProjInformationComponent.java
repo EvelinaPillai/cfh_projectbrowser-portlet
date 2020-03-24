@@ -154,11 +154,13 @@ public class ProjInformationComponent extends CustomComponent {
   private Panel descriptionPanel;
   
   private ComboBox projStatus;
+  private String user;
 
-  public ProjInformationComponent(DataHandler dh, State state, String resourceurl) {
+  public ProjInformationComponent(DataHandler dh, State state, String resourceurl, String user) {
     this.datahandler = dh;
     this.resourceUrl = resourceurl;
     this.state = state;
+    this.user = user;
 
     changeMetadata = new ChangeProjectMetadataComponent(dh, state, resourceurl);
 
@@ -175,8 +177,7 @@ public class ProjInformationComponent extends CustomComponent {
     descriptionPanel = new Panel();
     datasetTable = buildFilterTable();
     peopleInCharge = new Accordion();
-    projStatus = new ComboBox("Change Project Status");
-    projStatus.addItems("REQUESTED", "IN PROGRESS", "BILLING", "FINISHED");
+   
     
     setResponsive(true);
     vert.setResponsive(true);
@@ -332,15 +333,32 @@ public class ProjInformationComponent extends CustomComponent {
         }
         descContent.setValue(desc);
       }
+      
+      projStatus = new ComboBox("Change Project Status");
+      projStatus.setVisible(datahandler.getOpenBisClient().isUserAdmin(user));
+      projStatus.addItems("REQUESTED", "IN PROGRESS", "BILLING", "FINISHED");
       //add click listener CFH
       projStatus.addValueChangeListener(new ValueChangeListener() {
           
 
           @Override
           public void valueChange(ValueChangeEvent event) {
-          	String projectState = (String) event.getProperty().getValue();
-          	ProjectBean currentBean = datahandler.getProjectFromDB(projectBean.getId());
-          	datahandler.getDatabaseManager().changeProjectStatus(currentBean.getId(),projectState);
+        	  String projectState = (String) event.getProperty().getValue();
+        	  datahandler.getDatabaseManager().changeProjectStatus(currentBean.getId(),projectState);
+          	
+        	  String[] contact = currentBean.getContactPerson().split("<br>");
+        	  String email = contact[contact.length-1].replace("</p>", "");
+               
+        	  HashMap<String, Object> parameters = new HashMap<String, Object>(); 
+        	  String projectCode = currentBean.getCode();
+			  parameters.put("identifier", projectCode);
+        	  parameters.put("user", email);
+          	
+        	  parameters.put("project", projectCode );
+        	  parameters.put("change", "Your Project status changed to " + projectState + ".");
+        	  parameters.put("subject", "The CFH updated your project with the UVB number " + projectCode);
+          	 
+        	  datahandler.getOpenBisClient().triggerIngestionService("notification-service", parameters);	  	
           }
       });
       longDescription = new EditableLabel(projectBean.getLongDescription());

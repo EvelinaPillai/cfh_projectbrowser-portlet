@@ -263,7 +263,7 @@ public class PatientView extends VerticalLayout implements View {
     statusComponent = new PatientStatusComponent(datahandler, state, resourceUrl);
     workflowComponent = new WorkflowComponent(wfController);
     uploadComponent = new AttachmentUploadComponent();
-    projectInformation = new ProjInformationComponent(datahandler, state, resourceUrl);
+    projectInformation = new ProjInformationComponent(datahandler, state, resourceUrl, "");
     experimentComponent = new ExperimentComponent(datahandler, state, resourceUrl);
 
     patientViewTab.addStyleName(ValoTheme.TABSHEET_EQUAL_WIDTH_TABS);
