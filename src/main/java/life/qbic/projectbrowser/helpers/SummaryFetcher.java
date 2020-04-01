@@ -111,6 +111,7 @@ public class SummaryFetcher {
   public SummaryFetcher(OpenBisClient openbis, String tmpFolder) {
     this.tmpFolder = tmpFolder;
     this.openbis = openbis;
+
     allMap = new HashMap<String, String>();
 
 
@@ -145,6 +146,10 @@ public class SummaryFetcher {
 
   public void fetchSummaryComponent(String code, String name, String description,
       final ProjectSummaryReadyRunnable ready,final ProjectBean currentBean) {
+
+    this.species = new ArrayList<String>();
+    this.tissues = new ArrayList<String>();
+
     this.projectCode = code;
     this.projectName = name;
     this.projectDescription = description;
@@ -292,21 +297,7 @@ public class SummaryFetcher {
     
     res.addComponent(sectionS);
     res.addComponent(sectionT);
-    
-    //NO MORE TABLE AT ALL TODO remove this 
-    //    //creating one big table at the end of file and adding all tables at the end of the view 
-//    for (int i = 0; i <finalHeader.size(); i++) 
-//    	wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(finalHeader.get(i), finalData.get(i)));
-//    finalHeader = new ArrayList<List<String>>();
-//    finalData = new ArrayList<List<List<String>>>();
-//    for (Table t : tableList){
-//    	VerticalLayout section = new VerticalLayout();
-//      	section.addComponent(t);
-//      	res.addComponent(section);
-//      }
-//    tableList = new ArrayList<Table>();
-    
-    
+        
     addSummaryDownload(res);
     return res;
   }
