@@ -614,6 +614,7 @@ private String createTimeStamp() {
   private String parseTissue(Sample s) {
     String tissue = s.getProperties().get("Q_PRIMARY_TISSUE");
     String other = s.getProperties().get("Q_TISSUE_DETAILED");
+    System.out.println("Tissue "+ tissue);
     if (tissue.equals("OTHER"))
       if (other == null || other.isEmpty())
         tissue = "Other";

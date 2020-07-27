@@ -259,6 +259,26 @@ public class LevelComponent extends CustomComponent {
                                         retrievedDatasets.addAll(foundDataset);
                                     }
                                 }
+                            } else if (sample.getSampleTypeCode().equals("Q_CFH_NMR_RUN")){
+                            	  Map<String, String> sampleProperties = sample.getProperties();
+                                  TestSampleBean newBean = new TestSampleBean();
+                                  newBean.setCode(sample.getCode());
+                                  newBean.setId(sample.getIdentifier());
+                                  newBean.setType(sample.getSampleTypeCode());
+                                  newBean.setSampleType(sampleProperties.get("Q_SAMPLE_TYPE"));
+                                  newBean.setAdditionalInfo(sampleProperties.get("Q_ADDITIONAL_INFO"));
+                                  newBean.setExternalDB(sampleProperties.get("Q_EXTERNALDB_ID"));
+                                  newBean.setSecondaryName(sampleProperties.get("Q_SECONDARY_NAME"));
+                               
+                                  samplesContainer.addBean(newBean);
+
+                                  ArrayList<ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.DataSet> foundDataset =
+                                      datasetFilter.get(sample.getIdentifier());
+
+                                  if (foundDataset != null) {
+                                      retrievedDatasets.addAll(foundDataset);
+                                  }
+
                             }
                         }
                         numberOfSamples = samplesContainer.size();
@@ -345,7 +365,8 @@ public class LevelComponent extends CustomComponent {
                         this.datasetTable.setCaption("Raw Data");
 
                         numberOfDatasets = retrievedDatasets.size();
-                        this.datasetTable.setPageLength(Math.max(3, Math.min(numberOfDatasets, 10)));
+                        
+                       this.datasetTable.setPageLength(Math.max(3, Math.min(numberOfDatasets, 10)));
                     } else if (filterFor.equals("results")) {
                         BeanItemContainer<TestSampleBean> samplesContainer =
                             new BeanItemContainer<TestSampleBean>(TestSampleBean.class);
@@ -358,6 +379,7 @@ public class LevelComponent extends CustomComponent {
                             if (!sample.getSampleTypeCode().equals("Q_TEST_SAMPLE")
                                 && !sample.getSampleTypeCode().equals("Q_MICROARRAY_RUN")
                                 && !sample.getSampleTypeCode().equals("Q_MS_RUN")
+                                && !sample.getSampleTypeCode().equals("Q_CFH_NMR_RUN")
                                 && !sample.getSampleTypeCode().equals("Q_BIOLOGICAL_SAMPLE")
                                 && !sample.getSampleTypeCode().equals("Q_BIOLOGICAL_ENTITY")
                                 && !sample.getSampleTypeCode().equals("Q_NGS_SINGLE_SAMPLE_RUN")) { 

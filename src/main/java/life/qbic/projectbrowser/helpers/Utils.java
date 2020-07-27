@@ -192,7 +192,7 @@ public class Utils {
     public static String containerToString(final BeanItemContainer container) {
         final StringBuilder stringValue = new StringBuilder();
         final Set<String> exclusionList = new HashSet<>(Arrays
-            .asList("experiments", "dssPath", "children", "samples", "properties", "controlledVocabularies", "typeLabels", "containsData", "parent", "parents",
+            .asList("experiments", "dssPath", "children", "samples",  "properties", "controlledVocabularies", "typeLabels", "containsData", "parent", "parents",
                 "isSelected", "root"));
 
         final Collection<String> filteredPropertyIDs = ((Collection<String>) container.getContainerPropertyIds()).parallelStream()
@@ -209,10 +209,13 @@ public class Utils {
 
             for (final Object propertyId : filteredPropertyIDs) {
                 // Could be extended to an exclusion list if we don't want to show further columns
+            	
                 final Property prop = item.getItemProperty(propertyId);
+               
                 if (prop.getValue() == null) {
                     stringValue.append("-\t");
-                } else {
+                } 
+                else {
                 	stringValue.append(prop.getValue().toString()).append('\t');
                 }
             }

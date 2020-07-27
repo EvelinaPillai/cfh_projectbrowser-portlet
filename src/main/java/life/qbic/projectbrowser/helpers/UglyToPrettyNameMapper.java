@@ -258,6 +258,10 @@ public class UglyToPrettyNameMapper {
     namesMapping.put("Q_CFH_ELEMENTS", "Element Analysis Sample");
     namesMapping.put("Q_CFH_NMINS", "Nmin Analysis Sample");
     
+    namesMapping.put("Q_CFH_NMR", "NMR Analysis");
+    namesMapping.put("Q_CFH_NMR_RUN", "NMR Analysis Sample");
+    namesMapping.put("Q_CFH_NMR_RAW_DATA", "NMR Raw Data");
+    
 
   }
 
