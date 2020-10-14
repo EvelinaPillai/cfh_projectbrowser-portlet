@@ -294,9 +294,23 @@ public class SummaryFetcher {
     //add species and tissues into Summary and Document
     VerticalLayout sectionS = generateSampleDetails("Species: ", species, wordMLPackage.getMainDocumentPart());
     VerticalLayout sectionT = generateSampleDetails("Tissues: ", tissues, wordMLPackage.getMainDocumentPart());
-    
+
     res.addComponent(sectionS);
     res.addComponent(sectionT);
+    
+  //NO MORE TABLE AT ALL TODO remove this 
+    //    //creating one big table at the end of file and adding all tables at the end of the view 
+//    for (int i = 0; i <finalHeader.size(); i++) 
+//    	wordMLPackage.getMainDocumentPart().addObject(docxHelper.createTableWithContent(finalHeader.get(i), finalData.get(i)));
+//    finalHeader = new ArrayList<List<String>>();
+//    finalData = new ArrayList<List<List<String>>>();
+//    for (Table t : tableList){
+//    	VerticalLayout section = new VerticalLayout();
+//      	section.addComponent(t);
+//      	res.addComponent(section);
+//      }
+//    tableList = new ArrayList<Table>();
+    
         
     addSummaryDownload(res);
     return res;
