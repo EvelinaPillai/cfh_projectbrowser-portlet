@@ -24,6 +24,8 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.Br;
 import org.docx4j.wml.P;
+import org.docx4j.wml.PPr;
+import org.docx4j.wml.PPrBase.Spacing;
 
 import life.qbic.xml.manager.XMLParser;
 import life.qbic.xml.properties.Property;
@@ -169,7 +171,8 @@ public class SummaryFetcher {
 
   private VerticalLayout computePopupComponent() {
     initDocx4J();
-    P p = docxHelper.createParagraph("Summary for project " + projectCode, true, false, "40");
+    P p = docxHelper.createParagraph("Summary for project " + projectCode, true, false, "24");
+    
     wordMLPackage.getMainDocumentPart().addObject(p);
 
     VerticalLayout res = new VerticalLayout();
@@ -321,37 +324,59 @@ public class SummaryFetcher {
 	VerticalLayout sectionS = new VerticalLayout();
 	Label label = new Label(title);
 	label.setStyleName(ValoTheme.LABEL_BOLD);
-    wordMLPackage.getMainDocumentPart().addObject(docxHelper.createParagraph(label.getValue(), true, false, "32"));
+    wordMLPackage.getMainDocumentPart().addObject(docxHelper.createParagraph(label.getValue(), true, false, "24"));
     sectionS.addComponent(label);
     for (String line : details) {
         // vaadin
         Label l = new Label(line, ContentMode.HTML);
         sectionS.addComponent(l);
-      	mainDocumentPart.addObject(docxHelper.createParagraph(line, false, false, "32"));
+      	mainDocumentPart.addObject(docxHelper.createParagraph(line, false, false, "24"));
     }
 	return sectionS;
 }
 
   private void generateProjectDetails(Label investigator, Label contact, Label manager,
 		Label description, MainDocumentPart mainDocumentPart) {
+	  
 	 //remove HTML entries in text and create Paragraph for each line 
 	 String[] l1 = investigator.getValue().split("<br>|<p>|</p>");
+	 P inv = new P();
 	 for (String i : l1){
-		P inv = docxHelper.createParagraph(i, false, false, "24");  
-	 	mainDocumentPart.addObject(inv);
+		if (!i.isEmpty()&& !(i.equals("  "))) {			
+			if(i.equals("Principal Investigator: ")) {
+				inv = docxHelper.createParagraph(i, true, false, "24");  
+			}else {
+				inv = docxHelper.createParagraph(i, false, false, "24");  
+			}
+			mainDocumentPart.addObject(inv);
+		}	
 	 }
 	 String[] l2 = contact.getValue().split("<br>|<p>|</p>");
+	 P cont = new P();
 	 for (String i : l2){
-		 P cont = docxHelper.createParagraph(i, false, false, "24");  
-		 mainDocumentPart.addObject(cont);
-	 }
+			if (!i.isEmpty() && !(i.equals("  "))) {
+				if(i.equals("Contact Person: ")) {
+					cont = docxHelper.createParagraph(i, true, false, "24");
+				}else {
+					cont = docxHelper.createParagraph(i, false, false, "24");
+				}
+				mainDocumentPart.addObject(cont);
+			}
+		}
 	 
 	 String[] l3 = manager.getValue().split("<br>|<p>|</p>");
+	 P man = new P();
 	 for (String i : l3){
-		 P man = docxHelper.createParagraph(i, false, false, "24");  
-		 mainDocumentPart.addObject(man);
+			if (!i.isEmpty() && !(i.equals("  "))) {
+				if(i.equals("Project Manager: ")) { 
+					man = docxHelper.createParagraph(i, true, false, "24");
+				}else {
+					man = docxHelper.createParagraph(i, false, false, "24");
+				}
+				mainDocumentPart.addObject(man);
+			}
 	 }
-	
+	 
 	 P desc = docxHelper.createParagraph(description.getValue(), false, false, "24");  
 	 mainDocumentPart.addObject(desc);
   }
@@ -392,7 +417,7 @@ private String createTimeStamp() {
         expTypeTranslation.get(e.getExperimentTypeCode()) + " (" + e.getCode() + ")";
 
     // docx
-    P p1 = docxHelper.createParagraph(expHeadline, true, false, "32");
+    P p1 = docxHelper.createParagraph(expHeadline, true, false, "24");
     mainDocumentPart.addObject(p1);
 
     // view
@@ -438,7 +463,7 @@ private String createTimeStamp() {
       //additional info splitter
       String[] addLine =line.split("<br>");
       for (String i : addLine)
-    	  mainDocumentPart.addObject(docxHelper.createParagraph(i, false, false, "32"));
+    	  mainDocumentPart.addObject(docxHelper.createParagraph(i, false, false, "24"));
     }
     expPanel.setContent(section);
   }
@@ -462,7 +487,7 @@ private String createTimeStamp() {
   private Table generateSampleTable(List<Sample> samples, Map<String, List<DataSet>> sampIDToDS,
       List<DataSet> expDS, MainDocumentPart mainDocumentPart) {
     String tableHeadline = prettyNameMapper.getPrettyName(samples.get(0).getSampleTypeCode()) + "s"; // plural
-    mainDocumentPart.addObject(docxHelper.createParagraph(tableHeadline, false, false, "32"));
+    mainDocumentPart.addObject(docxHelper.createParagraph(tableHeadline, false, false, "24"));
       
     Table table = new Table(tableHeadline);
     table.setStyleName(ValoTheme.TABLE_SMALL);
@@ -628,7 +653,7 @@ private String createTimeStamp() {
   private String parseTissue(Sample s) {
     String tissue = s.getProperties().get("Q_PRIMARY_TISSUE");
     String other = s.getProperties().get("Q_TISSUE_DETAILED");
-    System.out.println("Tissue "+ tissue);
+   
     if (tissue.equals("OTHER"))
       if (other == null || other.isEmpty())
         tissue = "Other";

@@ -260,6 +260,7 @@ public class UglyToPrettyNameMapper {
     
     namesMapping.put("Q_CFH_NMR", "NMR Analysis");
     namesMapping.put("Q_CFH_NMR_RUN", "NMR Analysis Sample");
+    namesMapping.put("Q_CFH_MS_RAW", "MS Raw Zip-file Sample");
     namesMapping.put("Q_CFH_NMR_RAW_DATA", "NMR Raw Data");
     
 

@@ -6,7 +6,6 @@ import java.util.List;
 import org.docx4j.wml.BooleanDefaultTrue;
 import org.docx4j.wml.CTBorder;
 import org.docx4j.wml.CTShd;
-import org.docx4j.wml.CTSignedTwipsMeasure;
 import org.docx4j.wml.CTTblPrBase.TblStyle;
 import org.docx4j.wml.CTVerticalJc;
 import org.docx4j.wml.Color;
@@ -21,6 +20,7 @@ import org.docx4j.wml.R;
 import org.docx4j.wml.RFonts;
 import org.docx4j.wml.RPr;
 import org.docx4j.wml.STBorder;
+import org.docx4j.wml.STLineSpacingRule;
 import org.docx4j.wml.STVerticalJc;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.TblPr;
@@ -115,12 +115,18 @@ public class Docx4jHelper {
 
     Text text = factory.createText();
     text.setValue(content);
+    text.setSpace("preserve");
 
     R run = factory.createR();
     run.getContent().add(text);
-
+   
     paragraph.getContent().add(run);
-
+    
+    //paragraph spacing to zero  
+    PPr ppr = factory.createPPr();
+    ppr.setSpacing(createPPrBaseSpacing("0", "20"));
+    paragraph.setPPr(ppr);
+   
     RPr runProperties = factory.createRPr();
 
     if (bold)
@@ -129,8 +135,10 @@ public class Docx4jHelper {
       addUnderlineStyle(runProperties);
 
     setFontSize(runProperties, fontSize);
+      
     run.setRPr(runProperties);
-
+    
+    
     return paragraph;
   }
 
@@ -343,6 +351,7 @@ public class Docx4jHelper {
       size.setVal(new BigInteger(fontSize));
       runProperties.setSz(size);
       runProperties.setSzCs(size);
+          
     }
 
   }
@@ -395,4 +404,13 @@ public class Docx4jHelper {
     val.setVal(UnderlineEnumeration.SINGLE);
     runProperties.setU(val);
   }
+
+public Spacing createPPrBaseSpacing(String before , String after) {
+	Spacing spacing = factory.createPPrBaseSpacing();
+	spacing.setLineRule(STLineSpacingRule.AT_LEAST);
+	spacing.setBefore(new BigInteger(before));
+	spacing.setAfter(new BigInteger(after));
+	return spacing;
+	
+}
 }
